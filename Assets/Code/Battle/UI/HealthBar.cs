@@ -1,18 +1,39 @@
-﻿using UnityEngine;
+﻿using Battle.Player;
+using Battle.Signals;
+using System;
+using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace Battle.UI
 {
-    [RequireComponent(typeof(Image))]
     class HealthBar : MonoBehaviour
-    { 
-        private Image _image;
+    {
+        private PlayerController _player;
 
-        public void Awake()
+        private Text _text;
+        private Image _border;
+        private float _startHealth;
+
+        [Inject]
+        public void Init(PlayerController player)
         {
-            _image = GetComponent<Image>();
+            _player = player;
+            _startHealth = _player.GetHealth(); 
+            _text = GetComponentInChildren<Text>();
+            _border = GetComponent<Image>();
+            UpdateUI();
         }
 
+        public void OnHealthChange(HealthChangeSignal signal)
+        {
+            UpdateUI();
+        }
+
+        public void UpdateUI()
+        {
+            _text.text = _player.GetHealth().ToString();
+            _border.fillAmount = _player.GetHealth() / _startHealth;
+        }
     }
 }

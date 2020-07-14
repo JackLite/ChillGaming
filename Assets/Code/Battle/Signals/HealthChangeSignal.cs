@@ -1,14 +1,15 @@
-﻿using UnityEngine;
+﻿using Battle.Player;
+using UnityEngine;
 
 namespace Battle.Signals
 {
     class HealthChangeSignal
     {
-        public float Amount { get; private set; }
+        public PlayerController Player { get; private set; }
 
-        public HealthChangeSignal(float amount)
+        public HealthChangeSignal(PlayerController player)
         {
-            Amount = amount;
+            Player = player;
         }
     }
 }

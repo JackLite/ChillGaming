@@ -1,5 +1,6 @@
 ﻿using Battle.Player;
 using Battle.Signals;
+using Battle.UI;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -13,20 +14,57 @@ namespace Battle.Installers
 
         public override void InstallBindings()
         {
-            Container.BindInterfacesAndSelfTo<PlayerAttackHandler>().FromInstance(settings.playerAttackHandler);
-            Container.BindInterfacesAndSelfTo<PlayerId>().AsSingle();
-            Container.BindInterfacesTo<PlayerAttack>().AsSingle();
-            Container.BindInterfacesAndSelfTo<PlayerInput>().AsSingle().WithArguments(settings.attackButton);
+            InstallPlayer();
 
-            Container.BindInterfacesAndSelfTo<PlayerHealth>().AsSingle();
+            InstallUI();
 
+        }
+
+        private void InstallUI()
+        {
+            Container.DeclareSignal<HealthChangeSignal>();
+
+            Container.BindFactory<StatBar, StatBar.Factory>()
+                .FromComponentInNewPrefab(settings.statPrefab)
+                .WithGameObjectName("Stat")
+                .UnderTransform(settings.panel);
+
+            Container.BindInterfacesAndSelfTo<StatController>().AsSingle();
+        }
+
+        private void InstallPlayer()
+        {
+            Container.BindFactory<PlayerData, PlayerData.Factory>()
+                .FromFactory<PlayerDataFactory>();
+
+            Container.BindInterfacesAndSelfTo<PlayerAnimationHandler>()
+                .AsSingle()
+                .WithArguments(settings.modelAnimator);
+
+            Container.BindInterfacesAndSelfTo<PlayerId>()
+                .AsSingle();
+
+            Container.BindInterfacesAndSelfTo<PlayerInput>()
+                .AsSingle()
+                .WithArguments(settings.attackButton);
+
+            Container.BindInterfacesAndSelfTo<PlayerController>()
+                .AsSingle();
+
+            Container.BindSignal<PlayerAttackSignal>()
+                .ToMethod<PlayerController>(x => x.OnAttack).FromResolve();
         }
 
         [Serializable]
         private struct Settings
         {
             public Button attackButton;
-            public PlayerAttackHandler playerAttackHandler;
+            public Animator modelAnimator;
+
+            [Header("UI")]
+            public GameObject healthBarPrefab;
+            public Transform panel;
+            public GameObject statPrefab;
         }
     }
 }

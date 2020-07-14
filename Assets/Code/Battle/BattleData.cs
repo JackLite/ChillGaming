@@ -5,13 +5,11 @@ using Zenject;
 
 namespace Battle
 {
-    class BattleData : IInitializable
+    class BattleData
     {
-        private TextAsset _settings;
-
         private Data _data;
 
-        public Data data
+        public Data Data
         {
             get
             {
@@ -21,20 +19,15 @@ namespace Battle
             private set => _data = value;
         }
 
+        //TODO Add test with different settings
         [Inject(Id = "BattleSettings")]
         public BattleData(TextAsset settings)
         {
-            _settings = settings;
-        }
-
-        //TODO Add test with different settings
-        public void Initialize()
-        {
-            data = new Data();
-            var json = JSON.ParseString(_settings.text);
-            data.settings = ReadGameModel(json);
-            data.stats = ReadStats(json);
-            data.buffs = ReadBuffs(json);
+            Data = new Data();
+            var json = JSON.ParseString(settings.text);
+            Data.settings = ReadGameModel(json);
+            Data.stats = ReadStats(json);
+            Data.buffs = ReadBuffs(json);
         }
 
         private GameModel ReadGameModel(JSON json)

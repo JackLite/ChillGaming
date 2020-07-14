@@ -5,12 +5,10 @@ namespace Battle.Signals
 {
     class PlayerAttackSignal
     {
-        public PlayerId FromWho { get; private set; }
-        public float Damage { get; private set; }
-        public PlayerAttackSignal(PlayerId fromWho, float damage)
+        public PlayerController FromWho { get; private set; }
+        public PlayerAttackSignal(PlayerController fromWho)
         {
             FromWho = fromWho;
-            Damage = damage;
         }
     }
 }

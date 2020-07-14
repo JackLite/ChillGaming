@@ -11,9 +11,9 @@ namespace Battle.Installers
         public override void InstallBindings()
         {
             SignalBusInstaller.Install(Container);
-            Container.Bind<TextAsset>().FromInstance(settings).WithConcreteId("BattleSettings");
+            Container.Bind<TextAsset>().FromInstance(settings).AsSingle().WithConcreteId ("BattleSettings");
             Container.BindInterfacesAndSelfTo<BattleData>().AsSingle().NonLazy();
-            
+
             Container.DeclareSignal<PlayerAttackSignal>();
         }
     }
