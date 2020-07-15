@@ -22,14 +22,15 @@ namespace Battle.Installers
 
         private void InstallUI()
         {
-            Container.DeclareSignal<HealthChangeSignal>();
+            Container.DeclareSignal<StatsChangedSignal>();
 
-            Container.BindFactory<StatBar, StatBar.Factory>()
+            Container.BindFactory<int, StatBar, StatBar.Factory>()
                 .FromComponentInNewPrefab(settings.statPrefab)
                 .WithGameObjectName("Stat")
                 .UnderTransform(settings.panel);
 
             Container.BindInterfacesAndSelfTo<StatController>().AsSingle();
+            Container.BindSignal<StatsChangedSignal>().ToMethod<StatController>(x => x.OnStatsChanged).FromResolve();
         }
 
         private void InstallPlayer()
@@ -41,9 +42,6 @@ namespace Battle.Installers
                 .AsSingle()
                 .WithArguments(settings.modelAnimator);
 
-            Container.BindInterfacesAndSelfTo<PlayerId>()
-                .AsSingle();
-
             Container.BindInterfacesAndSelfTo<PlayerInput>()
                 .AsSingle()
                 .WithArguments(settings.attackButton);
@@ -53,6 +51,8 @@ namespace Battle.Installers
 
             Container.BindSignal<PlayerAttackSignal>()
                 .ToMethod<PlayerController>(x => x.OnAttack).FromResolve();
+
+            Container.BindSignal<BattleRestartedSignal>().ToMethod<PlayerController>(x => x.ReInitialize).FromResolve();
         }
 
         [Serializable]

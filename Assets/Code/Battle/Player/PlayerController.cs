@@ -10,6 +10,7 @@ namespace Battle.Player
     {
         private PlayerAnimationHandler _animationHandler;
         private PlayerData _playerData;
+        private PlayerData.Factory _playerDataFactory;
         private SignalBus _signalBus;
 
         public PlayerController(
@@ -18,6 +19,7 @@ namespace Battle.Player
             SignalBus signalBus)
         {
             _animationHandler = animationHandler;
+            _playerDataFactory = playerDataFactory;
             _playerData = playerDataFactory.Create();
             _signalBus = signalBus;
         }
@@ -37,14 +39,16 @@ namespace Battle.Player
         {
             if(_playerData.Stats.Health.value == 0) return;
 
-            _playerData.Stats.Health.value -= damage;
+            var adjustDamage = damage - damage * _playerData.Stats.Armor.value / 100;
+
+            _playerData.Stats.Health.value -= adjustDamage;
             if(_playerData.Stats.Health.value <= 0)
             {
                 _playerData.Stats.Health.value = 0;
             }
 
             _animationHandler.SetHealth(_playerData.Stats.Health.value);
-            _signalBus.Fire(new HealthChangeSignal(this));
+            _signalBus.Fire(new StatsChangedSignal(this));
         }
 
         public float GetDamage()
@@ -60,6 +64,13 @@ namespace Battle.Player
         public StatsContainer GetStatContainer()
         {
             return _playerData.Stats;
+        }
+
+        public void ReInitialize()
+        {
+            _playerData = _playerDataFactory.Create();
+            _animationHandler.SetHealth(_playerData.Stats.Health.value);
+            _signalBus.Fire(new StatsChangedSignal(this));
         }
     }
 }

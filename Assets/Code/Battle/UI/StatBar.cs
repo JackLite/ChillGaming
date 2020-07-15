@@ -10,6 +10,14 @@ namespace Battle.UI
         [SerializeField] private Text _text;
         [SerializeField] private Image _icon;
 
+        public int StatId { get; private set; }
+
+        [Inject]
+        public void Init(int statId)
+        {
+            StatId = statId;
+        }
+
         public void SetText(string text)
         {
             _text.text = text;
@@ -21,7 +29,12 @@ namespace Battle.UI
             _icon.sprite = sprite;
         }
 
-        public class Factory : PlaceholderFactory<StatBar>
+        public void Delete()
+        {
+            Destroy(gameObject);
+        }
+
+        public class Factory : PlaceholderFactory<int, StatBar>
         {
         }
     }
