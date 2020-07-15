@@ -19,7 +19,7 @@ namespace Battle.Player
             
         }
 
-        public class Factory : PlaceholderFactory<PlayerData>
+        public class Factory : PlaceholderFactory<bool, PlayerData>
         {
         }
     }

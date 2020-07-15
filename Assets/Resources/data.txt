@@ -13,8 +13,8 @@
 	},
 	"settings" : {
 		"playersCount" : 2,
-		"buffCountMin" : 0,
-		"buffCountMax" : 5,
+		"buffCountMin" : 4,
+		"buffCountMax" : 10,
 		"allowDuplicateBuffs" : false
 	},
 	"stats" : [

@@ -23,19 +23,29 @@ namespace Battle.Installers
         private void InstallUI()
         {
             Container.DeclareSignal<StatsChangedSignal>();
+            Container.DeclareSignal<BuffsChangedSignal>();
 
             Container.BindFactory<int, StatBar, StatBar.Factory>()
-                .FromComponentInNewPrefab(settings.statPrefab)
+                .FromNewComponentOnNewPrefab(settings.statPrefab)
                 .WithGameObjectName("Stat")
                 .UnderTransform(settings.panel);
 
             Container.BindInterfacesAndSelfTo<StatController>().AsSingle();
             Container.BindSignal<StatsChangedSignal>().ToMethod<StatController>(x => x.OnStatsChanged).FromResolve();
+
+            Container.BindFactory<BuffBar, BuffBar.Factory>()
+                .FromNewComponentOnNewPrefab(settings.statPrefab)
+                .WithGameObjectName("Buff")
+                .UnderTransform(settings.panel);
+
+            Container.BindInterfacesAndSelfTo<BuffController>().AsSingle();
+
+            Container.BindSignal<BuffsChangedSignal>().ToMethod<BuffController>(x => x.Reset).FromResolve();
         }
 
         private void InstallPlayer()
         {
-            Container.BindFactory<PlayerData, PlayerData.Factory>()
+            Container.BindFactory<bool, PlayerData, PlayerData.Factory>()
                 .FromFactory<PlayerDataFactory>();
 
             Container.BindInterfacesAndSelfTo<PlayerAnimationHandler>()

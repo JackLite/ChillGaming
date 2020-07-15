@@ -22,7 +22,9 @@ namespace Battle.Installers
                 .AsSingle()
                 .NonLazy();
 
-            Container.BindInterfacesAndSelfTo<RestartInput>().AsSingle().WithArguments(settings.restartButton);
+            Container.BindInterfacesAndSelfTo<RestartInput>()
+                .AsSingle()
+                .WithArguments(settings.restartWithoutBuffs, settings.restartWithBuffs);
 
             Container.DeclareSignal<PlayerAttackSignal>();
             Container.DeclareSignal<BattleRestartedSignal>();
@@ -32,7 +34,8 @@ namespace Battle.Installers
         public struct Settings
         {
             public TextAsset data;
-            public Button restartButton;
+            public Button restartWithoutBuffs;
+            public Button restartWithBuffs;
         }
     }
 }

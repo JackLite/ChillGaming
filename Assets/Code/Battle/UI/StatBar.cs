@@ -7,14 +7,16 @@ namespace Battle.UI
     class StatBar : MonoBehaviour
     {
         private const string iconResourcesPath = "Icons";
-        [SerializeField] private Text _text;
-        [SerializeField] private Image _icon;
+        private Text _text;
+        private Image _icon;
 
         public int StatId { get; private set; }
 
         [Inject]
         public void Init(int statId)
         {
+            _text = transform.Find("Text").GetComponent<Text>();
+            _icon = transform.Find("Icon").GetComponent<Image>();
             StatId = statId;
         }
 
