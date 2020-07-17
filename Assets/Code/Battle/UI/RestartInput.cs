@@ -6,9 +6,9 @@ namespace Battle.UI
 {
     class RestartInput : IInitializable
     {
-        private Button _restartWithoutBuffs;
-        private Button _restartWithBuffs;
-        private SignalBus _signalBus;
+        private readonly Button _restartWithoutBuffs;
+        private readonly Button _restartWithBuffs;
+        private readonly SignalBus _signalBus;
 
         public RestartInput(Button restartWithoutBuffs, Button restartWithBuffs, SignalBus signalBus)
         {

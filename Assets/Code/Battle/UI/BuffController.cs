@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using Battle.Player;
 using Zenject;
 
@@ -10,11 +6,11 @@ namespace Battle.UI
 {
     class BuffController : IInitializable
     {
-        private BuffBar.Factory _factory;
-        private PlayerController _player;
-        private IList<BuffBar> _buffBars;
+        private readonly BuffBar.Factory _factory;
+        private readonly PlayerController _player;
+        private readonly IList<BuffBar> _buffBars;
 
-        public BuffController(BuffBar.Factory factory, PlayerController player, BattleData battleData)
+        public BuffController(BuffBar.Factory factory, PlayerController player)
         {
             _factory = factory;
             _player = player;
@@ -25,19 +21,16 @@ namespace Battle.UI
         {
             foreach (var buff in _player.GetBuffsContainer().Buffs)
             {
-                var bar = _factory.Create();
-                bar.SetIcon(buff.icon);
-                bar.SetText(buff.title);
+                var bar = _factory.Create(buff.title, buff.icon);
                 _buffBars.Add(bar);
             }
         }
 
         public void Reset()
         {
-            foreach(var bar in _buffBars)
-            {
+            foreach (var bar in _buffBars)
                 bar.Delete();
-            }
+
             _buffBars.Clear();
             Initialize();
         }

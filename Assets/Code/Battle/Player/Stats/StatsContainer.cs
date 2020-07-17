@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using System.Collections.Generic;
 
 namespace Battle.Player.Stats
 {
@@ -10,38 +9,18 @@ namespace Battle.Player.Stats
         public const int damageId = 2;
         public const int vampirismId = 3;
 
-        public Stat Health { get; }
-        public Stat Armor { get; }
-        public Stat Damage { get; }
-        public Stat Vampirism { get; }
+        public Stat Health => Stats[healthId];
+        public Stat Armor => Stats[armorId];
+        public Stat Damage => Stats[damageId];
+        public Stat Vampirism => Stats[vampirismId];
 
-        public Stat[] Stats { get; }
+        public Dictionary<int, Stat> Stats { get; }
 
         public StatsContainer(Stat[] stats)
         {
-            Stats = stats;
-            foreach(var stat in stats)
-            {
-                switch(stat.id)
-                {
-                    case healthId:
-                        Debug.Log(stat.GetHashCode());
-                        Health = stat;
-                        break;
-                    case armorId:
-                        Armor = stat;
-                        break;
-                    case damageId:
-                        Damage = stat;
-                        break;
-                    case vampirismId:
-                        Vampirism = stat;
-                        break;
-                    default:
-                        Debug.LogWarning($"Uknown stat with id {stat.id}");
-                        break;
-                }
-            }
+            Stats = new Dictionary<int, Stat>();
+            foreach (var stat in stats)
+                Stats.Add(stat.id, stat);
         }
     }
 }

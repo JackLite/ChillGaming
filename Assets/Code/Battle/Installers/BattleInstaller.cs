@@ -9,26 +9,41 @@ namespace Battle.Installers
 {
     class BattleInstaller : MonoInstaller
     {
-        public Settings settings;
+        [SerializeField]
+        private Settings settings;
 
         public override void InstallBindings()
         {
-            SignalBusInstaller.Install(Container);
+            InstallBattleData();
+            InstallUI();
+            InstallSignals();
+        }
+
+        private void InstallBattleData()
+        {
             Container.Bind<TextAsset>().FromInstance(settings.data)
-                .AsSingle()
-                .WithConcreteId ("BattleSettings");
-            
+               .AsSingle()
+               .WithConcreteId("BattleSettings");
+
             Container.BindInterfacesAndSelfTo<BattleData>()
                 .AsSingle()
                 .NonLazy();
+        }
 
+        private void InstallUI()
+        {
             Container.BindInterfacesAndSelfTo<RestartInput>()
                 .AsSingle()
                 .WithArguments(settings.restartWithoutBuffs, settings.restartWithBuffs);
+        }
 
-            Container.DeclareSignal<PlayerAttackSignal>();
+        private void InstallSignals()
+        {
+            SignalBusInstaller.Install(Container);
+
+            Container.DeclareSignal<PlayerAttackedSignal>();
             Container.DeclareSignal<BattleRestartedSignal>();
-            Container.DeclareSignal<SuccessAttackSignal>();
+            Container.DeclareSignal<SuccessAttackedSignal>();
         }
 
         [Serializable]

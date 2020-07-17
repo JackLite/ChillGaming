@@ -1,7 +1,6 @@
 ﻿using Battle.Player.Buffs;
 using Battle.Player.Stats;
 using Battle.Signals;
-using System;
 using UnityEngine;
 using Zenject;
 
@@ -9,43 +8,38 @@ namespace Battle.Player
 {
     class PlayerController : IInitializable
     {
-        private PlayerAnimationHandler _animationHandler;
+        private readonly PlayerData.Factory _playerDataFactory;
+        private readonly SignalBus _signalBus;
         private PlayerData _playerData;
-        private PlayerData.Factory _playerDataFactory;
-        private SignalBus _signalBus;
 
-        public PlayerController(
-            PlayerAnimationHandler animationHandler,
-            PlayerData.Factory playerDataFactory,
-            SignalBus signalBus)
+        public PlayerController(PlayerData.Factory playerDataFactory, SignalBus signalBus)
         {
-            _animationHandler = animationHandler;
             _playerDataFactory = playerDataFactory;
-            _playerData = playerDataFactory.Create(true);
             _signalBus = signalBus;
         }
 
-        public void OnAttack(PlayerAttackSignal signal)
+        public void Initialize()
         {
-            if (signal.FromWho == this)
-            {
-                _animationHandler.PlayAttackAnimation();
-                return;
-            }
+            _playerData = _playerDataFactory.Create(true);
+            ApplyBuffs();
+        }
+
+        public void OnAttack(PlayerAttackedSignal signal)
+        {
+            if (signal.FromWho == this && GetHealth() > 0) return;
 
             if (GetHealth() <= 0 || signal.FromWho.GetHealth() <= 0) return;
 
             TakeDamage(signal.FromWho);
         }
 
-        public void OnSuccessAttack(SuccessAttackSignal signal)
+        public void OnSuccessAttack(SuccessAttackedSignal signal)
         {
             if (signal.FromWho != this) return;
 
             if (GetHealth() <= 0 || signal.Target.GetHealth() <= 0) return;
 
-            var damage = signal.Damage;
-            _playerData.Stats.Health.value += damage * _playerData.Stats.Vampirism.value / 100;
+            _playerData.Stats.Health.value += signal.Damage * _playerData.Stats.Vampirism.value / 100;
             _signalBus.Fire(new StatsChangedSignal(this));
         }
 
@@ -53,21 +47,21 @@ namespace Battle.Player
         {
             if (_playerData.Stats.Health.value == 0) return;
 
-            var damage = fromWho.GetDamage();
+            var adjustDamage = CalculateAdjustDamage(fromWho.GetDamage());
+
+            var resultHealth = _playerData.Stats.Health.value - adjustDamage;
+            _playerData.Stats.Health.value = Mathf.Clamp(resultHealth, 0, resultHealth);
+
+            _signalBus.Fire(new StatsChangedSignal(this));
+            _signalBus.Fire(new SuccessAttackedSignal(fromWho, this, adjustDamage));
+        }
+
+        private float CalculateAdjustDamage(float damage)
+        {
 
             var adjustDamage = damage - damage * _playerData.Stats.Armor.value / 100;
-
-            if (adjustDamage < 0) adjustDamage = 0;
-            _playerData.Stats.Health.value -= adjustDamage;
-
-            if (_playerData.Stats.Health.value <= 0)
-            {
-                _playerData.Stats.Health.value = 0;
-            }
-
-            _animationHandler.SetHealth(_playerData.Stats.Health.value);
-            _signalBus.Fire(new StatsChangedSignal(this));
-            _signalBus.Fire(new SuccessAttackSignal(fromWho, this, adjustDamage));
+            adjustDamage = Mathf.Clamp(adjustDamage, 0, adjustDamage);
+            return adjustDamage;
         }
 
         public float GetDamage()
@@ -94,14 +88,8 @@ namespace Battle.Player
         {
             _playerData = _playerDataFactory.Create(signal.WithBuffs);
             ApplyBuffs();
-            _animationHandler.SetHealth(_playerData.Stats.Health.value);
             _signalBus.Fire(new StatsChangedSignal(this));
             _signalBus.Fire(new BuffsChangedSignal(this));
-        }
-
-        public void Initialize()
-        {
-            ApplyBuffs();
         }
 
         private void ApplyBuffs()
@@ -119,9 +107,9 @@ namespace Battle.Player
         {
             foreach (var stat in _playerData.Stats.Stats)
             {
-                if (stat.id == statMod.statId)
+                if (stat.Value.id == statMod.statId)
                 {
-                    stat.value += statMod.value;
+                    stat.Value.value += statMod.value;
                     return;
                 }
             }

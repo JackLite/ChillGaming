@@ -1,44 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
 namespace Battle.UI
 {
-    class BuffBar : MonoBehaviour
+    class BuffBar : Bar
     {
-        private const string iconResourcesPath = "Icons";
-        private Text _text;
-        private Image _icon;
-
         [Inject]
-        public void Init()
+        public void Init(string text, string icon)
         {
             _text = transform.Find("Text").GetComponent<Text>();
             _icon = transform.Find("Icon").GetComponent<Image>();
+            SetIcon(icon);
+            SetText(text);
         }
 
-        public void SetText(string text)
-        {
-            _text.text = text;
-        }
-
-        public void SetIcon(string iconName)
-        {
-            var sprite = Resources.Load<Sprite>($"{iconResourcesPath}/{iconName}");
-            _icon.sprite = sprite;
-        }
-
-        public void Delete()
-        {
-            Destroy(gameObject);
-        }
-
-        public class Factory : PlaceholderFactory<BuffBar>
+        /// <summary>
+        /// First argument - title
+        /// Second argument - icon name
+        /// </summary>
+        public class Factory : PlaceholderFactory<string, string, BuffBar>
         {
         }
     }

@@ -1,5 +1,4 @@
 ﻿using Battle.Signals;
-using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
 
@@ -7,9 +6,10 @@ namespace Battle.Player
 {
     class PlayerInput : IInitializable
     {
-        private Button _attackBtn;
-        private PlayerController _playerController;
-        private SignalBus _signalBus;
+        private readonly Button _attackBtn;
+        private readonly PlayerController _playerController;
+        private readonly SignalBus _signalBus;
+
         public PlayerInput(Button attackButton, PlayerController playerController, SignalBus signalBus)
         {
             _attackBtn = attackButton;
@@ -24,7 +24,7 @@ namespace Battle.Player
 
         private void OnClick()
         {
-            _signalBus.Fire(new PlayerAttackSignal(_playerController));
+            _signalBus.Fire(new PlayerAttackedSignal(_playerController));
         }
     }
 }

@@ -1,22 +1,16 @@
-﻿using Battle.Player.Buffs;
-using Battle.Player.Stats;
-using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using UnityEngine;
+using Battle.Player.Buffs;
+using Battle.Player.Stats;
 using Zenject;
 
 namespace Battle.Player
 {
     class PlayerDataFactory : IFactory<bool, PlayerData>
     {
-        private BattleData _battleData;
+        private readonly BattleData _battleData;
 
-        public PlayerDataFactory(BattleData battleData)
-        {
-            _battleData = battleData;
-        }
+        public PlayerDataFactory(BattleData battleData) => _battleData = battleData;
 
         public PlayerData Create(bool withBuffs)
         {
@@ -30,7 +24,7 @@ namespace Battle.Player
         {
             var stats = new Stat[_battleData.Data.stats.Length];
             for (var i = 0; i < stats.Length; i++)
-                stats[i] = (Stat) _battleData.Data.stats[i].Clone();
+                stats[i] = (Stat)_battleData.Data.stats[i].Clone();
 
             return new StatsContainer(stats);
         }
@@ -63,7 +57,7 @@ namespace Battle.Player
 
             var res = new LinkedList<int>();
             var filled = 0;
-            while(filled < count)
+            while (filled < count)
             {
                 var num = UnityEngine.Random.Range(min, max);
                 if (!withDuplicates && res.Contains(num)) continue;

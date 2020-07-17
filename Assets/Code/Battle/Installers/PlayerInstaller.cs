@@ -1,7 +1,7 @@
-﻿using Battle.Player;
+﻿using System;
+using Battle.Player;
 using Battle.Signals;
 using Battle.UI;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 using Zenject;
@@ -10,37 +10,38 @@ namespace Battle.Installers
 {
     class PlayerInstaller : MonoInstaller
     {
-        [SerializeField] private Settings settings;
+        [SerializeField]
+        private Settings settings;
 
         public override void InstallBindings()
         {
+            InitExecutionOrder();
             InstallPlayer();
-
             InstallUI();
+            InstallSignals();
+        }
 
+        private void InitExecutionOrder()
+        {
+            Container.BindInitializableExecutionOrder<PlayerController>(-10);
         }
 
         private void InstallUI()
         {
-            Container.DeclareSignal<StatsChangedSignal>();
-            Container.DeclareSignal<BuffsChangedSignal>();
-
-            Container.BindFactory<int, StatBar, StatBar.Factory>()
+            Container.BindFactory<int, string, StatBar, StatBar.Factory>()
                 .FromNewComponentOnNewPrefab(settings.statPrefab)
                 .WithGameObjectName("Stat")
                 .UnderTransform(settings.panel);
 
             Container.BindInterfacesAndSelfTo<StatController>().AsSingle();
-            Container.BindSignal<StatsChangedSignal>().ToMethod<StatController>(x => x.OnStatsChanged).FromResolve();
 
-            Container.BindFactory<BuffBar, BuffBar.Factory>()
+            Container.BindFactory<string, string, BuffBar, BuffBar.Factory>()
                 .FromNewComponentOnNewPrefab(settings.statPrefab)
                 .WithGameObjectName("Buff")
                 .UnderTransform(settings.panel);
 
             Container.BindInterfacesAndSelfTo<BuffController>().AsSingle();
 
-            Container.BindSignal<BuffsChangedSignal>().ToMethod<BuffController>(x => x.Reset).FromResolve();
         }
 
         private void InstallPlayer()
@@ -56,17 +57,35 @@ namespace Battle.Installers
                 .AsSingle()
                 .WithArguments(settings.attackButton);
 
-            Container.BindInterfacesAndSelfTo<PlayerController>()
-                .AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerController>().AsSingle();
+        }
 
-            Container.BindSignal<PlayerAttackSignal>()
+        private void InstallSignals()
+        {
+            Container.DeclareSignal<StatsChangedSignal>();
+            Container.DeclareSignal<BuffsChangedSignal>();
+
+            Container.BindSignal<BuffsChangedSignal>()
+                .ToMethod<BuffController>(x => x.Reset).FromResolve();
+
+            Container.BindSignal<PlayerAttackedSignal>()
                 .ToMethod<PlayerController>(x => x.OnAttack).FromResolve();
 
             Container.BindSignal<BattleRestartedSignal>()
                 .ToMethod<PlayerController>(x => x.ReInitialize).FromResolve();
 
-            Container.BindSignal<SuccessAttackSignal>()
+            Container.BindSignal<SuccessAttackedSignal>()
                 .ToMethod<PlayerController>(x => x.OnSuccessAttack).FromResolve();
+            
+            Container.BindSignal<SuccessAttackedSignal>()
+                .ToMethod<PlayerAnimationHandler>(x => x.PlayAttackAnimation).FromResolve();
+
+            Container.BindSignal<StatsChangedSignal>()
+                .ToMethod<StatController>(x => x.OnStatsChanged).FromResolve();
+
+            Container.BindSignal<StatsChangedSignal>()
+                .ToMethod<PlayerAnimationHandler>(x => x.UpdateHealth).FromResolve();
+
         }
 
         [Serializable]

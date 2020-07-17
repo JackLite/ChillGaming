@@ -13,8 +13,8 @@
 	},
 	"settings" : {
 		"playersCount" : 2,
-		"buffCountMin" : 1,
-		"buffCountMax" : 4,
+		"buffCountMin" : 0,
+		"buffCountMax" : 5,
 		"allowDuplicateBuffs" : false
 	},
 	"stats" : [
@@ -25,8 +25,8 @@
 	],
 	"buffs" : [	
 		{ "id" : 0, "title" : "Вампир", "icon" : "book", "stats" : [
-			{"statId":0,"value":100},
-			{"statId":3,"value":25}
+			{"statId":0,"value":120},
+			{"statId":3,"value":50}
 		]},
 		{ "id" : 1, "title" : "Щит", "icon" : "shield", "stats" : [
 			{"statId":1,"value":25},

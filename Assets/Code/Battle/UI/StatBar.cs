@@ -1,42 +1,24 @@
-﻿using UnityEngine;
-using UnityEngine.UI;
-using Zenject;
+﻿using Zenject;
 
 namespace Battle.UI
 {
-    class StatBar : MonoBehaviour
+    class StatBar : Bar
     {
-        private const string iconResourcesPath = "Icons";
-        private Text _text;
-        private Image _icon;
-
         public int StatId { get; private set; }
 
         [Inject]
-        public void Init(int statId)
+        public void Init(int statId, string icon)
         {
-            _text = transform.Find("Text").GetComponent<Text>();
-            _icon = transform.Find("Icon").GetComponent<Image>();
+            InitUIComponents();
             StatId = statId;
+            SetIcon(icon);
         }
 
-        public void SetText(string text)
-        {
-            _text.text = text;
-        }
-
-        public void SetIcon(string iconName)
-        {
-            var sprite = Resources.Load<Sprite>($"{iconResourcesPath}/{iconName}");
-            _icon.sprite = sprite;
-        }
-
-        public void Delete()
-        {
-            Destroy(gameObject);
-        }
-
-        public class Factory : PlaceholderFactory<int, StatBar>
+        /// <summary>
+        /// First argumet - stat id.
+        /// Second argumet - icon name;
+        /// </summary>
+        public class Factory : PlaceholderFactory<int, string, StatBar>
         {
         }
     }

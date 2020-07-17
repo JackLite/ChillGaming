@@ -1,15 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Battle.Player;
+﻿using Battle.Player;
 
 namespace Battle.Signals
 {
     class BuffsChangedSignal
     {
-        public PlayerController Player { get; private set; }
+        public PlayerController Player { get; }
         public BuffsChangedSignal(PlayerController player)
         {
             Player = player;
