@@ -2,7 +2,7 @@
 
 namespace Battle.Signals
 {
-    class StatsChangedSignal
+    public class StatsChangedSignal
     {
         public PlayerController Player { get; }
 

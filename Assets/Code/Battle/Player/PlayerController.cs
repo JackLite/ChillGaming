@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Battle.Player
 {
-    class PlayerController : IInitializable
+    public class PlayerController : IInitializable
     {
         private readonly PlayerData.Factory _playerDataFactory;
         private readonly SignalBus _signalBus;

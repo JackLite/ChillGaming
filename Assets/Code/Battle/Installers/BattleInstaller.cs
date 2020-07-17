@@ -21,12 +21,9 @@ namespace Battle.Installers
 
         private void InstallBattleData()
         {
-            Container.Bind<TextAsset>().FromInstance(settings.data)
-               .AsSingle()
-               .WithConcreteId("BattleSettings");
-
             Container.BindInterfacesAndSelfTo<BattleData>()
                 .AsSingle()
+                .WithArguments(settings.data.text)
                 .NonLazy();
         }
 

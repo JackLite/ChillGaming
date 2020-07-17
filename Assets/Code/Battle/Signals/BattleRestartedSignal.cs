@@ -1,6 +1,6 @@
 ﻿namespace Battle.Signals
 {
-    class BattleRestartedSignal
+    public class BattleRestartedSignal
     {
         public bool WithBuffs { get; }
 

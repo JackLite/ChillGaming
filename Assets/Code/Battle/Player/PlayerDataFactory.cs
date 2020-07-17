@@ -6,7 +6,7 @@ using Zenject;
 
 namespace Battle.Player
 {
-    class PlayerDataFactory : IFactory<bool, PlayerData>
+    public class PlayerDataFactory : IFactory<bool, PlayerData>
     {
         private readonly BattleData _battleData;
 

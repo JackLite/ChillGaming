@@ -6,6 +6,10 @@ public class Data
     public GameModel settings;
     public Stat[] stats;
     public Buff[] buffs;
+    public int Test()
+    {
+        return 0;
+    }
 }
 
 [Serializable]
@@ -14,7 +18,6 @@ public class GameModel
     public int buffCountMin;
     public int buffCountMax;
     public bool allowDuplicateBuffs;
-
 }
 
 [Serializable]

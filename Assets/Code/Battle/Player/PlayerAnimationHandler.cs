@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Battle.Player
 {
-    class PlayerAnimationHandler
+    public class PlayerAnimationHandler
     {
         private readonly Animator _animator;
         private readonly PlayerController _player;

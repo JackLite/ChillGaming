@@ -2,7 +2,7 @@
 
 namespace Battle.Signals
 {
-    class PlayerAttackedSignal
+    public class PlayerAttackedSignal
     {
         public PlayerController FromWho { get; }
         public PlayerAttackedSignal(PlayerController fromWho)

@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Battle.Player
 {
-    class PlayerInput : IInitializable
+    public class PlayerInput : IInitializable
     {
         private readonly Button _attackBtn;
         private readonly PlayerController _playerController;

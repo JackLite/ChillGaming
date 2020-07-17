@@ -2,7 +2,7 @@
 
 namespace Battle.Player.Stats
 {
-    class StatsContainer
+    public class StatsContainer
     {
         public const int healthId = 0;
         public const int armorId = 1;

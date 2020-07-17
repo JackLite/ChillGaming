@@ -4,7 +4,7 @@ using Zenject;
 
 namespace Battle.Player
 {
-    class PlayerData
+    public class PlayerData
     {
         public StatsContainer Stats { get; }
         public BuffsContainer Buffs { get; }
