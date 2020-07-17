@@ -27,27 +27,39 @@ namespace Battle.Player
 
         public void OnAttack(PlayerAttackSignal signal)
         {
-            if (_playerData.Stats.Health.value <= 0 || signal.FromWho.GetHealth() <= 0) return;
-            if (signal.FromWho != this)
+            if (signal.FromWho == this)
             {
-                TakeDamage(signal.FromWho.GetDamage());
+                _animationHandler.PlayAttackAnimation();
                 return;
             }
 
-            var damage = GetDamage();
-            _playerData.Stats.Health.value += damage * _playerData.Stats.Vampirism.value / 100;
-            _signalBus.Fire(new StatsChangedSignal(this));
+            if (GetHealth() <= 0 || signal.FromWho.GetHealth() <= 0) return;
 
-            _animationHandler.PlayAttackAnimation();
+            TakeDamage(signal.FromWho);
         }
 
-        private void TakeDamage(float damage)
+        public void OnSuccessAttack(SuccessAttackSignal signal)
+        {
+            if (signal.FromWho != this) return;
+
+            if (GetHealth() <= 0 || signal.Target.GetHealth() <= 0) return;
+
+            var damage = signal.Damage;
+            _playerData.Stats.Health.value += damage * _playerData.Stats.Vampirism.value / 100;
+            _signalBus.Fire(new StatsChangedSignal(this));
+        }
+
+        private void TakeDamage(PlayerController fromWho)
         {
             if (_playerData.Stats.Health.value == 0) return;
 
+            var damage = fromWho.GetDamage();
+
             var adjustDamage = damage - damage * _playerData.Stats.Armor.value / 100;
+
             if (adjustDamage < 0) adjustDamage = 0;
             _playerData.Stats.Health.value -= adjustDamage;
+
             if (_playerData.Stats.Health.value <= 0)
             {
                 _playerData.Stats.Health.value = 0;
@@ -55,6 +67,7 @@ namespace Battle.Player
 
             _animationHandler.SetHealth(_playerData.Stats.Health.value);
             _signalBus.Fire(new StatsChangedSignal(this));
+            _signalBus.Fire(new SuccessAttackSignal(fromWho, this, adjustDamage));
         }
 
         public float GetDamage()

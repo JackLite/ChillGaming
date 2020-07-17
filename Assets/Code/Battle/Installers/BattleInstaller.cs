@@ -28,6 +28,7 @@ namespace Battle.Installers
 
             Container.DeclareSignal<PlayerAttackSignal>();
             Container.DeclareSignal<BattleRestartedSignal>();
+            Container.DeclareSignal<SuccessAttackSignal>();
         }
 
         [Serializable]

@@ -62,7 +62,11 @@ namespace Battle.Installers
             Container.BindSignal<PlayerAttackSignal>()
                 .ToMethod<PlayerController>(x => x.OnAttack).FromResolve();
 
-            Container.BindSignal<BattleRestartedSignal>().ToMethod<PlayerController>(x => x.ReInitialize).FromResolve();
+            Container.BindSignal<BattleRestartedSignal>()
+                .ToMethod<PlayerController>(x => x.ReInitialize).FromResolve();
+
+            Container.BindSignal<SuccessAttackSignal>()
+                .ToMethod<PlayerController>(x => x.OnSuccessAttack).FromResolve();
         }
 
         [Serializable]

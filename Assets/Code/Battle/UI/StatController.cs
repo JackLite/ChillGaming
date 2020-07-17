@@ -25,10 +25,10 @@ namespace Battle.UI
             foreach(var stat in _player.GetStatContainer().Stats)
             {
                 var statBar = _factory.Create(stat.id);
-                statBar.SetText(stat.value.ToString());
                 statBar.SetIcon(stat.icon);
                 _statBars.Add(statBar);
             }
+            UpdateUI();
         }
 
         public void OnStatsChanged(StatsChangedSignal signal)
@@ -42,7 +42,7 @@ namespace Battle.UI
             foreach (var stat in _player.GetStatContainer().Stats)
             {
                 var statBar = GetStatBar(stat.id);
-                statBar.SetText(stat.value.ToString());
+                statBar.SetText(stat.value.ToString("0.0"));
             }
         }
 
