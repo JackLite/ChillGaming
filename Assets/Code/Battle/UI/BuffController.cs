@@ -19,7 +19,7 @@ namespace Battle.UI
 
         public void Initialize()
         {
-            foreach (var buff in _player.GetBuffsContainer().Buffs)
+            foreach (var buff in _player.BuffsContainer.Buffs)
             {
                 var bar = _factory.Create(buff.title, buff.icon);
                 _buffBars.Add(bar);

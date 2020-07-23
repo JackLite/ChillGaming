@@ -12,6 +12,11 @@ namespace Battle.Player
         private readonly SignalBus _signalBus;
         private PlayerData _playerData;
 
+        public float Health => _playerData.Stats.Health.value;
+        public float Damage => _playerData.Stats.Damage.value;
+        public StatsContainer StatsContainer => _playerData.Stats;
+        public BuffsContainer BuffsContainer => _playerData.Buffs;
+
         public PlayerController(PlayerData.Factory playerDataFactory, SignalBus signalBus)
         {
             _playerDataFactory = playerDataFactory;
@@ -26,9 +31,9 @@ namespace Battle.Player
 
         public void OnAttack(PlayerAttackedSignal signal)
         {
-            if (signal.FromWho == this && GetHealth() > 0) return;
+            if (signal.FromWho == this) return;
 
-            if (GetHealth() <= 0 || signal.FromWho.GetHealth() <= 0) return;
+            if (Health <= 0 || signal.FromWho.Health <= 0) return;
 
             TakeDamage(signal.FromWho);
         }
@@ -37,9 +42,12 @@ namespace Battle.Player
         {
             if (signal.FromWho != this) return;
 
-            if (GetHealth() <= 0 || signal.Target.GetHealth() <= 0) return;
+            if (Health <= 0 || signal.Target.Health <= 0) return;
 
-            _playerData.Stats.Health.value += signal.Damage * _playerData.Stats.Vampirism.value / 100;
+            var fixedVampirism = Mathf.Clamp(_playerData.Stats.Vampirism.value, 0, 
+                _playerData.Stats.Vampirism.value);
+
+            _playerData.Stats.Health.value += signal.Damage * fixedVampirism / 100;
             _signalBus.Fire(new StatsChangedSignal(this));
         }
 
@@ -47,7 +55,7 @@ namespace Battle.Player
         {
             if (_playerData.Stats.Health.value == 0) return;
 
-            var adjustDamage = CalculateAdjustDamage(fromWho.GetDamage());
+            var adjustDamage = CalculateAdjustDamage(fromWho.Damage);
 
             var resultHealth = _playerData.Stats.Health.value - adjustDamage;
             _playerData.Stats.Health.value = Mathf.Clamp(resultHealth, 0, resultHealth);
@@ -58,30 +66,9 @@ namespace Battle.Player
 
         private float CalculateAdjustDamage(float damage)
         {
-
             var adjustDamage = damage - damage * _playerData.Stats.Armor.value / 100;
             adjustDamage = Mathf.Clamp(adjustDamage, 0, adjustDamage);
             return adjustDamage;
-        }
-
-        public float GetDamage()
-        {
-            return _playerData.Stats.Damage.value;
-        }
-
-        public float GetHealth()
-        {
-            return _playerData.Stats.Health.value;
-        }
-
-        public StatsContainer GetStatContainer()
-        {
-            return _playerData.Stats;
-        }
-
-        public BuffsContainer GetBuffsContainer()
-        {
-            return _playerData.Buffs;
         }
 
         public void ReInitialize(BattleRestartedSignal signal)

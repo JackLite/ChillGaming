@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using Battle.Player;
 using Battle.Player.Stats;
@@ -21,8 +22,8 @@ namespace Battle.UI
 
         public void Initialize()
         {
-            _statBars = new List<StatBar>(_player.GetStatContainer().Stats.Count);
-            foreach (var stat in _player.GetStatContainer().Stats)
+            _statBars = new List<StatBar>(_player.StatsContainer.Stats.Count);
+            foreach (var stat in _player.StatsContainer.Stats)
             {
                 var statBar = _factory.Create(stat.Value.id, stat.Value.icon);
                 _statBars.Add(statBar);
@@ -38,7 +39,7 @@ namespace Battle.UI
 
         private void UpdateUI()
         {
-            foreach (var stat in _player.GetStatContainer().Stats)
+            foreach (var stat in _player.StatsContainer.Stats)
             {
                 var statBar = GetStatBar(stat.Value.id);
                 statBar.SetText(FormatStatValue(stat.Value));
@@ -47,7 +48,9 @@ namespace Battle.UI
 
         private string FormatStatValue(Stat stat)
         {
-            return stat.id == StatsContainer.healthId ? stat.value.ToString("0.00") : stat.value.ToString();
+            return stat.id == StatsContainer.healthId 
+                ? stat.value.ToString("0.00", CultureInfo.InvariantCulture) 
+                : stat.value.ToString();
         }
 
         private StatBar GetStatBar(int statId)

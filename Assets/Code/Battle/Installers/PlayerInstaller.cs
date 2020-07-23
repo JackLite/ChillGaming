@@ -8,7 +8,7 @@ using Zenject;
 
 namespace Battle.Installers
 {
-    class PlayerInstaller : MonoInstaller
+    public class PlayerInstaller : MonoInstaller
     {
         [SerializeField]
         private Settings settings;

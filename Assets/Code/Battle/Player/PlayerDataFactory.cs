@@ -2,6 +2,7 @@
 using System.Linq;
 using Battle.Player.Buffs;
 using Battle.Player.Stats;
+using UnityEngine;
 using Zenject;
 
 namespace Battle.Player
@@ -32,7 +33,9 @@ namespace Battle.Player
         private BuffsContainer CreateBuffsContainer()
         {
             var settings = _battleData.Data.settings;
-            var buffsCount = UnityEngine.Random.Range(settings.buffCountMin, settings.buffCountMax + 1);
+
+            var min = Mathf.Clamp(settings.buffCountMin, settings.buffCountMin, settings.buffCountMax);
+            var buffsCount = Random.Range(min, settings.buffCountMax + 1);
             var buffs = GenerateRandomBuffs(_battleData.Data.buffs, buffsCount, settings.allowDuplicateBuffs);
             return new BuffsContainer(buffs.ToArray());
         }

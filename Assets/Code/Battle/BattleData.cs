@@ -1,6 +1,5 @@
 ﻿using Leguar.TotalJSON;
 using System;
-using UnityEngine;
 using Zenject;
 
 namespace Battle

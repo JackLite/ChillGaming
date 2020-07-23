@@ -23,7 +23,7 @@ namespace Battle.Player
         public void UpdateHealth(StatsChangedSignal signal)
         {
             if (signal.Player != _player) return;
-            _animator.SetInteger("Health", (int)signal.Player.GetHealth());
+            _animator.SetInteger("Health", (int)signal.Player.Health);
         }
     }
 }
